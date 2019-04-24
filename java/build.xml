@@ -1,0 +1,12 @@
+<project default="compile">
+    
+    <target name="compile">
+        <mkdir dir="bin"/>
+        <javac srcdir="src" destdir="bin"/>
+    </target>
+    
+    <target name="clean" description="Remove all generated files.">
+    <delete dir="bin"/>
+    </target>
+    
+</project>

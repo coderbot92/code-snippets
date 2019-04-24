@@ -1,0 +1,74 @@
+sudo: required
+
+notifications:
+  email: false
+
+language: python
+cache: pip
+
+language: node_js
+
+node_js:
+  - "8"
+
+language: java
+
+jdk:
+- oraclejdk8
+
+python:
+  - "3.7"
+
+language: cpp
+
+compiler:
+  - gcc
+
+before_install:
+- sudo apt-get update
+- sudo apt-get install ant
+- sudo apt-get update -y && 
+  sudo apt-get install build-essential software-properties-common -y && 
+  sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y && 
+  sudo apt-get update -y && 
+  sudo apt-get install gcc-8 g++-8 -y && 
+  sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 60 --slave /usr/bin/g++ g++ /usr/bin/g++-8;
+- npm i -g npm
+
+before_script:
+  - PARENTDIR=$(pwd)
+  - g++ --version
+  - java -version
+  - python3 --version
+  - npm install -g gulp-cli
+
+
+install:
+  - sudo pip install python-coveralls
+  - sudo pip install coverage
+  - sudo pip install nose
+
+
+script:
+  - cd $PARENTDIR/cpp
+  - make all
+  - make clean
+  - cd $PARENTDIR/java
+  - ant compile
+  - ant clean
+  - cd $PARENTDIR/java/project
+  - sudo chmod a+x gradlew
+  - sudo ./gradlew clean
+  - sudo ./gradlew test
+  - cd $PARENTDIR/javascript
+  - $(which npm) install
+  - gulp build
+  - cd $PARENTDIR/python
+  - nosetests --with-coverage
+
+
+after_success:
+  - cd $PARENTDIR/python
+  - coveralls
+  - cd $PARENTDIR/java
+  - ./gradlew jacocoTestReport coveralls

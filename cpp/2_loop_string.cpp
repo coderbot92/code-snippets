@@ -1,8 +1,7 @@
 #include <iostream>
+#include <string>
 
-/**
- * Looping over characters in a string
- */
+/// Looping over characters in a string
 int main(int argc, char* argv[])
 {
     std::string str{ "dummy" };
